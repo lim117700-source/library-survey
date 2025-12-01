@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>화성상신중학교 도서관 정기간행물 수요조사</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js (시각화 요소) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome (아이콘) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Noto Sans KR) -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #fdfbf7; /* 따뜻한 종이 질감 배경 */
+            color: #2d3748;
+        }
+        /* 차트 컨테이너 스타일 */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        /* 카드 호버 효과 */
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .highlight-text {
+            color: #c05621; /* 강조 색상 */
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Navigation (상단 메뉴) -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-book-reader text-green-700 text-2xl"></i>
+                    <span class="font-bold text-lg text-gray-800">화성상신중학교 도서관</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <button onclick="scrollToSection('hero')" class="text-gray-600 hover:text-green-700 px-3 py-2 text-sm font-medium">홈</button>
+                    <button onclick="scrollToSection('overview')" class="text-gray-600 hover:text-green-700 px-3 py-2 text-sm font-medium">조사 개요</button>
+                    <button onclick="scrollToSection('criteria')" class="text-gray-600 hover:text-green-700 px-3 py-2 text-sm font-medium">선정 기준</button>
+                    <button onclick="scrollToSection('notes')" class="text-gray-600 hover:text-green-700 px-3 py-2 text-sm font-medium">유의 사항</button>
+                </div>
+                <!-- 모바일 메뉴 버튼 -->
+                <button class="md:hidden text-gray-600 focus:outline-none" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+            <!-- 모바일 메뉴 내용 -->
+            <div id="mobile-menu" class="hidden md:hidden pb-4">
+                <button onclick="scrollToSection('hero')" class="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-green-50">홈</button>
+                <button onclick="scrollToSection('overview')" class="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-green-50">조사 개요</button>
+                <button onclick="scrollToSection('criteria')" class="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-green-50">선정 기준</button>
+                <button onclick="scrollToSection('notes')" class="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-green-50">유의 사항</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="flex-grow">
+        
+        <!-- Hero Section (가장 눈에 띄는 시작 부분) -->
+        <section id="hero" class="bg-green-50 py-16 px-4 text-center border-b border-green-100">
+            <div class="max-w-4xl mx-auto">
+                <div class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold mb-4">
+                    2026학년도 준비
+                </div>
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-6 leading-tight">
+                    여러분이 읽고 싶은<br>
+                    <span class="text-green-700">정기간행물</span>을 추천해주세요!
+                </h1>
+                <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+                    본교 상상별책방 도서관에서는 학생들의 꿈과 교직원분들의 전문성을 키워줄<br class="hidden md:inline"> 
+                    다양하고 유익한 잡지와 신문을 찾고 있습니다.
+                </p>
+                <div class="flex justify-center gap-4">
+                    <button onclick="scrollToSection('survey-link')" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition duration-300 flex items-center">
+                        <i class="fas fa-pen-fancy mr-2"></i> 바로 참여하기
+                    </button>
+                    <button onclick="scrollToSection('overview')" class="bg-white hover:bg-gray-50 text-green-700 font-semibold py-3 px-8 rounded-lg shadow border border-green-200 transition duration-300">
+                        자세히 보기
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Overview Section (개요 카드) -->
+        <section id="overview" class="py-16 px-4 max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">수요조사 개요</h2>
+                <p class="text-gray-600">이번 조사는 우리 학교 도서관의 내년을 준비하는 중요한 과정입니다.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- 카드 1: 대상 -->
+                <div class="bg-white p-8 rounded-xl shadow-md card-hover border-t-4 border-blue-500 transition duration-300">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4 text-blue-600 text-xl">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">참여 대상</h3>
+                    <p class="text-gray-600">
+                        <span class="font-semibold block mb-1">화성상신중학교 구성원 모두</span>
+                        전교생 및 전 교직원 여러분의 소중한 의견을 기다립니다.
+                    </p>
+                </div>
+
+                <!-- 카드 2: 기간 -->
+                <div class="bg-white p-8 rounded-xl shadow-md card-hover border-t-4 border-green-500 transition duration-300">
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4 text-green-600 text-xl">
+                        <i class="far fa-calendar-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">조사 기간</h3>
+                    <div class="text-gray-600" id="date-display">
+                        <!-- JS에서 날짜 정보 채움 -->
+                    </div>
+                </div>
+
+                <!-- 카드 3: 목적 -->
+                <div class="bg-white p-8 rounded-xl shadow-md card-hover border-t-4 border-orange-500 transition duration-300">
+                    <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4 text-orange-600 text-xl">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">조사 목적</h3>
+                    <p class="text-gray-600">
+                        2026학년도 구독 목록 선정을 위한 <span class="highlight-text">기초 자료 확보</span> 및 이용자 중심의 도서관 운영
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Criteria Section (선정 기준 및 시각화) -->
+        <section id="criteria" class="py-16 px-4 bg-white">
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    
+                    <!-- 왼쪽: 텍스트 기준 목록 -->
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-6">어떤 간행물이 선정되나요?</h2>
+                        <p class="text-gray-600 mb-8 leading-relaxed">
+                            여러분의 추천은 아래의 기준들을 종합적으로 고려하여 검토됩니다. 
+                            단순한 흥미 위주보다는 우리 학교의 교육 목표와 환경에 어울리는 자료가 우선 선정됩니다.
+                        </p>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center mt-1">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-bold text-gray-800">학습 및 진로 탐색</h4>
+                                    <p class="text-sm text-gray-500">교과 학습 연계 및 미래 진로 설계에 도움이 되는 자료</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mt-1">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-bold text-gray-800">시사 상식 및 교양</h4>
+                                    <p class="text-sm text-gray-500">폭넓은 시야와 인문학적 소양을 기를 수 있는 내용</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mt-1">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-bold text-gray-800">정기 간행물 (잡지/신문)</h4>
+                                    <p class="text-sm text-gray-500">단행본(일반 도서)은 제외, 정기적으로 발행되는 자료</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center mt-1">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-bold text-gray-800">건전성 및 적합성</h4>
+                                    <p class="text-sm text-gray-500">학교 교육 환경에 적합한 건전한 내용</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 오른쪽: 레이더 차트 시각화 -->
+                    <div class="bg-gray-50 p-6 rounded-2xl shadow-inner flex flex-col items-center">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4 text-center">우리 도서관이 지향하는 장서 구성</h3>
+                        <div class="chart-container">
+                            <canvas id="criteriaChart"></canvas>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-4 text-center">* 위 차트는 선정 기준의 중요도를 시각화한 예시입니다. (균형 잡힌 자료 구성 지향)</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Notes & Guidelines Section (유의사항) -->
+        <section id="notes" class="py-16 px-4 max-w-4xl mx-auto">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-gray-800">참여 전 유의사항</h2>
+                <p class="text-gray-600 mt-2">효율적인 예산 운영을 위해 확인해주세요.</p>
+            </div>
+
+            <div class="space-y-4">
+                <!-- 유의사항 1: 예산 -->
+                <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                    <button class="w-full px-6 py-4 text-left font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-none flex justify-between items-center transition-colors" onclick="toggleAccordion('note1')">
+                        <span><i class="fas fa-coins text-yellow-600 mr-2"></i> 추천 수량 및 예산</span>
+                        <i id="icon-note1" class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                    </button>
+                    <div id="note1" class="hidden px-6 py-4 text-gray-600 bg-white">
+                        개인당 추천 수량에는 제한이 없습니다. 다만, 한정된 구독 예산(8~10종 예상)과 교육적 활용도를 고려하여 도서관운영위원회의 심의를 거쳐 최종 목록이 선정됩니다. 모든 추천 도서가 구독되지 않을 수 있음을 양해 부탁드립니다.
+                    </div>
+                </div>
+
+                <!-- 유의사항 2: 참고 사이트 -->
+                <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                    <button class="w-full px-6 py-4 text-left font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-none flex justify-between items-center transition-colors" onclick="toggleAccordion('note2')">
+                        <span><i class="fas fa-search-plus text-indigo-600 mr-2"></i> 정기간행물 참고 사이트</span>
+                        <i id="icon-note2" class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                    </button>
+                    <div id="note2" class="hidden px-6 py-4 text-gray-600 bg-white space-y-3">
+                        <p class="mb-2">어떤 잡지나 신문을 추천할지 고민된다면, 아래 사이트에서 다양한 정기간행물 목록을 참고해 보세요.</p>
+                        <ul class="list-disc list-inside space-y-2 ml-4">
+                            <li>
+                                <a href="https://www.nicebook.kr/html/sub_03/sub03_01_list.php?c_id=c_100_03&m_idx=196&c_c_id=c_13&order=selling&search_price=&s_price=&e_price=&rank1=" target="_blank" class="text-indigo-500 hover:text-indigo-700 font-medium transition-colors">
+                                    <i class="fas fa-external-link-alt mr-1 text-xs"></i> 나이스북 정기간행물
+                                </a>
+                                <span class="text-xs text-gray-400 block md:inline-block"> (학년별 다양한 간행물 목록 참고)</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 유의사항 3: 제외 대상 -->
+                <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                    <button class="w-full px-6 py-4 text-left font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-none flex justify-between items-center transition-colors" onclick="toggleAccordion('note3')">
+                        <span><i class="fas fa-exclamation-circle text-red-500 mr-2"></i> 제외 대상</span>
+                        <i id="icon-note3" class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                    </button>
+                    <div id="note3" class="hidden px-6 py-4 text-gray-600 bg-white">
+                        일회성 단행본(일반 소설, 문제집 등)은 정기간행물 예산으로 구입할 수 없습니다. 또한 지나치게 선정적이거나 폭력적인 내용, 특정 영리 목적의 홍보 간행물은 선정에서 제외됩니다.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action Section (설문 참여 링크) -->
+        <section id="survey-link" class="bg-green-700 py-20 px-4 text-center text-white">
+            <div class="max-w-3xl mx-auto">
+                <i class="fas fa-paper-plane text-5xl mb-6 text-green-300"></i>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">여러분의 의견을 들려주세요</h2>
+                <p class="text-lg text-green-100 mb-10">
+                    아래 버튼을 클릭하여 Google Forms에 접속한 후,<br>
+                    희망하는 정기간행물 정보를 입력해 주세요.
+                </p>
+                
+                <!-- 실제 구글 폼 링크를 삽입했습니다. -->
+                <a href="https://docs.google.com/forms/d/1UK_a4ZHFGjg-Bjbt4i40q1JOgfMiSfSXiY7rhO9z5Ug/edit" target="_blank" class="inline-block bg-white text-green-800 font-bold text-xl py-4 px-10 rounded-full shadow-lg hover:bg-green-50 transform hover:scale-105 transition duration-300">
+                    수요조사 참여하기 <i class="fas fa-external-link-alt ml-2 text-sm"></i>
+                </a>
+
+                <div class="mt-8 text-sm text-green-200">
+                    <p>문의: 상상별책방 도서관 (내선번호: 407)</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer (바닥글) -->
+    <footer class="bg-gray-800 text-gray-400 py-8 text-center">
+        <p class="mb-2">화성상신중학교 상상별책방 도서관</p>
+        <p class="text-xs">© 202X Sinseol Middle School Library. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript Logic (날짜 표시, 차트, 아코디언 기능) -->
+    <script>
+        // --- 데이터 설정 ---
+        const surveyData = {
+            startDate: "2025. 12. 1.(월)",
+            endDate: "2025. 12. 12.(금)",
+            duration: "10일간",
+            target: "전교생 및 전 교직원"
+        };
+
+        // --- 핵심 기능 ---
+        
+        // 페이지 로드 시 데이터 및 차트 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            // 기간 정보 표시
+            const dateDisplay = document.getElementById('date-display');
+            dateDisplay.innerHTML = `
+                <div class="font-bold text-gray-800 text-lg">${surveyData.startDate}</div>
+                <div class="text-center text-gray-400 text-sm my-1">~</div>
+                <div class="font-bold text-gray-800 text-lg">${surveyData.endDate}</div>
+                <div class="text-green-600 font-bold text-sm mt-2 bg-green-50 inline-block px-2 rounded">총 ${surveyData.duration}</div>
+            `;
+
+            // 레이더 차트 초기화
+            initRadarChart();
+        });
+
+        // 부드러운 스크롤 이동
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+            // 모바일 메뉴가 열려있으면 닫기
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
+        }
+
+        // 모바일 메뉴 토글
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // 아코디언 (유의사항 펼치기/접기) 기능
+        function toggleAccordion(id) {
+            const content = document.getElementById(id);
+            const icon = document.getElementById(`icon-${id}`);
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // --- Chart.js 레이더 차트 설정 ---
+        function initRadarChart() {
+            const ctx = document.getElementById('criteriaChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['학습 연계성', '진로 탐색', '시사/교양', '건전성', '정기성'],
+                    datasets: [{
+                        label: '선정 기준 중요도',
+                        data: [90, 85, 80, 100, 95], // 중요도(0~100)를 개념적으로 표시
+                        backgroundColor: 'rgba(72, 187, 120, 0.2)', 
+                        borderColor: 'rgba(47, 133, 90, 1)', 
+                        pointBackgroundColor: 'rgba(47, 133, 90, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(47, 133, 90, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, 
+                    elements: {
+                        line: {
+                            borderWidth: 3
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: true,
+                                color: 'rgba(0,0,0,0.1)'
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                            ticks: {
+                                display: false // 숫자 레이블 숨김
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 12,
+                                    family: "'Noto Sans KR', sans-serif",
+                                    weight: 'bold'
+                                },
+                                color: '#4a5568'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': 매우 중요함'; // 툴팁 텍스트
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
